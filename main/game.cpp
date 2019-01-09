@@ -155,12 +155,12 @@ class points
 {
 
     Texture pat;
-    Sprite pa;
     int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
     double curr_v=10,uthbe=500.0/2;
     int badha=500,flag=1;
     int opacity=255;
     public:
+    Sprite pa;
     bool f=0;
     int op_cnt=0;
     void scale()
@@ -253,17 +253,17 @@ class pathor
 {
 
     Texture pat;
-    Sprite pa;
     int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
     double curr_v=10,uthbe=500.0/2;
-    int badha=500,flag=1;
+    int badha=500;
     int opacity=255;
     public:
+    Sprite pa;
     bool f=0;
     int op_cnt=0;
     void scale()
     {
-        pa.scale(0.06,0.06);
+        pa.scale(0.2,0.2);
     }
     void load_points(string txt,int ori)
     {
@@ -285,48 +285,14 @@ class pathor
         {
             pa.move(10,0);
         }
-        if(uthbe>10)
+
+        if(pa.getPosition().y<badha)
         {
-            if(flag==1)
-            {
-                if(pa.getPosition().y<badha)
-                {
-                    pa.move(0.0,curr_v);
-                    curr_v+=(flag*9.8/30.0);
-                }
-                else 
-                {
-                    flag*=-1;
-                    curr_v/=2;
-                    pa.move(0.0,-curr_v);
-                    curr_v+=(flag*9.8/30.0);
-                }
-            }
-            else
-            {
-                if(pa.getPosition().y>badha-uthbe && curr_v>0)
-                {
-                    pa.move(0.0,-curr_v);
-                    curr_v+=(flag*9.8/30.0);
-                }
-                else 
-                {
-                    uthbe/=3;
-                    flag*=-1;
-                    // curr_v=0;
-                    pa.move(0.0,curr_v);
-                    curr_v+=(flag*9.8/30.0);
-                }
-            }
-        }
-        else
+            pa.move(0.0,curr_v);
+            curr_v+=(9.8/30.0);
+        }else
         {
-            if(pa.getPosition().y<badha)
-            {
-                f=1;
-                pa.move(0.0,curr_v);
-                curr_v+=(flag*9.8/30.0);
-            }
+            f=1;
         }
         // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
         
@@ -374,14 +340,13 @@ int main() {
     for(int i=0;i<n;i++)
     {
         int x=rand()%win_W;
-        tmp_pat.load_points("file/stone.png",x);
+        tmp_pat.load_points("file/fattor1.png",x);
         pat.push_back(tmp_pat);
-
     }
 
 
 
-    int timer=0;
+    int timer_stone=0,timer_fattor=0;
 
     gari new_gari;
     new_gari.load_bg("file/bg_3.jpg");
@@ -396,18 +361,55 @@ int main() {
             if(event.type == event.Closed) window1.close();
         }
 
-        if(timer>80){
+        if(timer_stone>20){//coin er timer_stone
             int x=rand()%win_W;
             tmp.load_points("file/stone.png",x);
             stone_coin.push_back(tmp);
-            timer=0;
+            timer_stone=0;
         }else{
-            timer++;
+            timer_stone++;
+        }
+
+        if(timer_fattor>20){//fattor er timer_fattor
+            int x=rand()%win_W;
+            tmp_pat.load_points("file/fattor1.png",x);
+            pat.push_back(tmp_pat);
+            timer_fattor=0;
+        }else{
+            timer_fattor++;
         }
 
         window1.clear(Color::White);
         new_gari.move();
         new_gari.print();
+        for(int i=0;i<stone_coin.size();i++)
+        {
+            for(int j=0;j<stone_coin.size();j++){
+                if(i!=j){
+                    if(stone_coin[i].pa.getGlobalBounds().intersects(stone_coin[j].pa.getGlobalBounds())){
+                        stone_coin.erase(stone_coin.begin()+j);
+                    }
+                }
+            }
+        }
+        for(int i=0;i<pat.size();i++)
+        {
+            for(int j=0;j<pat.size();j++){
+                if(i!=j){
+                    if(pat[i].pa.getGlobalBounds().intersects(pat[j].pa.getGlobalBounds())){
+                        pat.erase(pat.begin()+j);
+                    }
+                }
+            }
+        }
+        for(int i=0;i<stone_coin.size();i++)
+        {
+            for(int j=0;j<pat.size();j++){
+                if(stone_coin[i].pa.getGlobalBounds().intersects(pat[j].pa.getGlobalBounds())){
+                    pat.erase(pat.begin()+j);
+                }
+            }
+        }
         for(int i=0;i<stone_coin.size();i++){
             stone_coin[i].move();
             if(stone_coin[i].f){
@@ -417,6 +419,18 @@ int main() {
         }
         for(int i=0;i<stone_coin.size();i++){
             stone_coin[i].print();
+        }
+
+        for(int i=0;i<pat.size();i++){
+            pat[i].move();
+            if(pat[i].f){
+                pat[i].blink();
+                if(pat[i].op_cnt>80)
+                    pat.erase(pat.begin()+i);
+            }
+        }
+        for(int i=0;i<pat.size();i++){
+            pat[i].print();
         }
 
 
