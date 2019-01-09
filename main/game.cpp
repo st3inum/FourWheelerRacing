@@ -313,9 +313,6 @@ public:
         a.getGlobalBounds().intersects(chaka2.getGlobalBounds())||
         a.getGlobalBounds().intersects(pass_body.getGlobalBounds())||
         a.getGlobalBounds().intersects(pass_matha.getGlobalBounds())||
-        a.getGlobalBounds().intersects(bg_w_1.getGlobalBounds())||
-        a.getGlobalBounds().intersects(bg_w_2.getGlobalBounds())||
-        a.getGlobalBounds().intersects(bg_w_3.getGlobalBounds())||
         a.getGlobalBounds().intersects(gari.getGlobalBounds())
         ;
     }
@@ -445,13 +442,21 @@ int main() {
         // point count
         for(int i=0;i<stone_coin.size();i++)
         {
-            if(new_gari.collusion(stone_coin[i].pa))point++;
+            if(new_gari.collusion(stone_coin[i].pa))
+            {
+                point++;
+                stone_coin.erase(stone_coin.begin()+i);
+            }
         }
 
         // health reduce
         for(int i=0;i<pat.size();i++)
         {
-            if(new_gari.collusion(pat[i].pa))health-=20;
+            if(new_gari.collusion(pat[i].pa))
+            {
+                health-=20;
+                pat.erase(pat.begin()+i);
+            }
         }
 
 
@@ -460,7 +465,8 @@ int main() {
             stone_coin[i].move();
             if(stone_coin[i].f){
                 stone_coin[i].blink();
-                if(stone_coin[i].op_cnt>=80) stone_coin.erase(stone_coin.begin()+i);
+                if(stone_coin[i].op_cnt>=80) 
+                    stone_coin.erase(stone_coin.begin()+i);
             }
         }
 
