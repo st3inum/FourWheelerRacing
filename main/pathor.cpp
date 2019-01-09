@@ -13,8 +13,10 @@ class pathor
     int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
     double curr_v=10,uthbe=500.0/2;
     int badha=500,flag=1;
+    int opacity=255;
     public:
     bool f=0;
+    int op_cnt=0;
     void scale()
     {
         pa.scale(0.09,0.09);
@@ -84,6 +86,16 @@ class pathor
         }
         // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
     }
+    void blink()
+    {   
+        op_cnt++;
+        opacity+=8;
+        opacity%=255;
+        // if(opacity<=63)pa.setColor(Color(255,255,255,63));
+        if(opacity<=127)pa.setColor(Color(255,255,255,10));
+        // else if(opacity<=191)pa.setColor(Color(255,255,255,191));
+        else if(opacity<=255)pa.setColor(Color(255,255,255,255));
+    }
     void print()
     {
         window1.draw(pa);
@@ -112,9 +124,10 @@ int main()
         window1.clear(Color::White);
         for(int i=0;i<pat.size();i++){
             pat[i].move();
-            // if(pat[i].f){
-            //     pat.erase(pat.begin()+i);
-            // }
+            if(pat[i].f){
+                pat[i].blink();
+                if(pat[i].op_cnt>=80) pat.erase(pat.begin()+i);
+            }
         }
         for(int i=0;i<pat.size();i++){
             pat[i].print();

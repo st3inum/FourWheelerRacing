@@ -151,7 +151,7 @@ public:
     }
 };
 
-class pathor
+class points
 {
 
     Texture pat;
@@ -159,13 +159,15 @@ class pathor
     int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
     double curr_v=10,uthbe=500.0/2;
     int badha=500,flag=1;
+    int opacity=255;
     public:
     bool f=0;
+    int op_cnt=0;
     void scale()
     {
-        pa.scale(0.09,0.09);
+        pa.scale(0.06,0.06);
     }
-    void load_pathor(string txt,int ori)
+    void load_points(string txt,int ori)
     {
         // pat.setSmooth(true);
         pat.loadFromFile(txt);
@@ -231,13 +233,119 @@ class pathor
         // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
         
     }
+    void blink()
+    {   
+        op_cnt++;
+        opacity+=8;
+        opacity%=255;
+        // if(opacity<=63)pa.setColor(Color(255,255,255,63));
+        if(opacity<=127)pa.setColor(Color(255,255,255,10));
+        // else if(opacity<=191)pa.setColor(Color(255,255,255,191));
+        else if(opacity<=255)pa.setColor(Color(255,255,255,255));
+    }
     void print()
     {
         window1.draw(pa);
     }
 };
 
+class pathor
+{
 
+    Texture pat;
+    Sprite pa;
+    int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
+    double curr_v=10,uthbe=500.0/2;
+    int badha=500,flag=1;
+    int opacity=255;
+    public:
+    bool f=0;
+    int op_cnt=0;
+    void scale()
+    {
+        pa.scale(0.06,0.06);
+    }
+    void load_points(string txt,int ori)
+    {
+        // pat.setSmooth(true);
+        pat.loadFromFile(txt);
+        pa.setColor(Color(255,255,255,255));
+        pa.setTexture(pat);
+        pa.setOrigin(pa.getLocalBounds().width/2, pa.getLocalBounds().height/2);
+        pa.setPosition(ori,10);
+        cout<<"# "<<txt<<endl;
+    }
+    void move()
+    {
+        if(Keyboard::isKeyPressed(Keyboard::Right))
+        {
+           pa.move(-10,0);
+        }
+        if(Keyboard::isKeyPressed(Keyboard::Left))
+        {
+            pa.move(10,0);
+        }
+        if(uthbe>10)
+        {
+            if(flag==1)
+            {
+                if(pa.getPosition().y<badha)
+                {
+                    pa.move(0.0,curr_v);
+                    curr_v+=(flag*9.8/30.0);
+                }
+                else 
+                {
+                    flag*=-1;
+                    curr_v/=2;
+                    pa.move(0.0,-curr_v);
+                    curr_v+=(flag*9.8/30.0);
+                }
+            }
+            else
+            {
+                if(pa.getPosition().y>badha-uthbe && curr_v>0)
+                {
+                    pa.move(0.0,-curr_v);
+                    curr_v+=(flag*9.8/30.0);
+                }
+                else 
+                {
+                    uthbe/=3;
+                    flag*=-1;
+                    // curr_v=0;
+                    pa.move(0.0,curr_v);
+                    curr_v+=(flag*9.8/30.0);
+                }
+            }
+        }
+        else
+        {
+            if(pa.getPosition().y<badha)
+            {
+                f=1;
+                pa.move(0.0,curr_v);
+                curr_v+=(flag*9.8/30.0);
+            }
+        }
+        // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
+        
+    }
+    void blink()
+    {   
+        op_cnt++;
+        opacity+=8;
+        opacity%=255;
+        // if(opacity<=63)pa.setColor(Color(255,255,255,63));
+        if(opacity<=127)pa.setColor(Color(255,255,255,10));
+        // else if(opacity<=191)pa.setColor(Color(255,255,255,191));
+        else if(opacity<=255)pa.setColor(Color(255,255,255,255));
+    }
+    void print()
+    {
+        window1.draw(pa);
+    }
+};
 
 
 int main() {
@@ -247,18 +355,29 @@ int main() {
     srand(time(NULL));
     
     int n=1;
+    std::vector<points> stone_coin;
     std::vector<pathor> pat;
-    pathor tmp;
+    points tmp;
+    pathor tmp_pat;
     tmp.scale();
 
     for(int i=0;i<n;i++)
     {
         int x=rand()%win_W;
-        tmp.load_pathor("file/stone.png",x);
-        pat.push_back(tmp);
+        tmp.load_points("file/stone.png",x);
+        stone_coin.push_back(tmp);
 
     }
     
+    tmp_pat.scale();
+
+    for(int i=0;i<n;i++)
+    {
+        int x=rand()%win_W;
+        tmp_pat.load_points("file/stone.png",x);
+        pat.push_back(tmp_pat);
+
+    }
 
 
 
@@ -270,6 +389,7 @@ int main() {
     new_gari.load_gari("file/Car.png");
     new_gari.load_passenger_body("file/driver-body.png");
     new_gari.load_passenger_matha("file/passanger2-head.png");
+
     while(window1.isOpen()) {
         Event event;
         while(window1.pollEvent(event)) {
@@ -278,8 +398,8 @@ int main() {
 
         if(timer>80){
             int x=rand()%win_W;
-            tmp.load_pathor("file/stone.png",x);
-            pat.push_back(tmp);
+            tmp.load_points("file/stone.png",x);
+            stone_coin.push_back(tmp);
             timer=0;
         }else{
             timer++;
@@ -288,14 +408,15 @@ int main() {
         window1.clear(Color::White);
         new_gari.move();
         new_gari.print();
-        for(int i=0;i<pat.size();i++){
-            pat[i].move();
-            if(pat[i].f){
-                pat.erase(pat.begin()+i);
+        for(int i=0;i<stone_coin.size();i++){
+            stone_coin[i].move();
+            if(stone_coin[i].f){
+                stone_coin[i].blink();
+                if(stone_coin[i].op_cnt>=80) stone_coin.erase(stone_coin.begin()+i);
             }
         }
-        for(int i=0;i<pat.size();i++){
-            pat[i].print();
+        for(int i=0;i<stone_coin.size();i++){
+            stone_coin[i].print();
         }
 
 
