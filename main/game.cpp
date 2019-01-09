@@ -178,6 +178,8 @@ class gari
     Texture text_C,text_G,passenger_body,passenger_matha,bg1,bg2,bg3,text_c;
     int pos_x=-10,pos_y=386,pos_w_x=-10,d=12800*2+15,wind_f=1280; // d for total distance you want to travel ;)
     Sprite chaka1,chaka2,gari,pass_body,pass_matha,bg_w_1,bg_w_2,bg_w_3;
+
+    int opacity=255;
 public:
     void load_chaka(string txt)
     {
@@ -300,11 +302,39 @@ public:
                 }
             }
         }
-
         //cout<<pos_x<<' '<<pos_w_x<<' '<<d<<endl;
         //cout<<pos_w_x<<' '<<wind_f<<' '<<wind_n<<endl;
         //if(Keyboard::isKeyPressed(Keyboard::Up)) chaka1.move(0, -10),chaka2.move(0, -10),gari.move(0, -10),pass_body.move(0,-10),pass_matha.move(0,-10);
         //if(Keyboard::isKeyPressed(Keyboard::Down)) chaka1.move(0, 10),chaka2.move(0, 10),gari.move(0, 10),pass_body.move(0,10),pass_matha.move(0,10);
+    }
+    void blink()
+    {   
+        opacity+=20;
+        opacity%=255;
+        if(opacity<=127)
+        {
+            gari.setColor(Color(255,255,255,127));
+            chaka1.setColor(Color(255,255,255,127));
+            chaka2.setColor(Color(255,255,255,127));
+            pass_body.setColor(Color(255,255,255,127));
+            pass_matha.setColor(Color(255,255,255,127));
+        }
+        else if(opacity<=255)
+        {
+            gari.setColor(Color(255,255,255,255));
+            chaka1.setColor(Color(255,255,255,255));
+            chaka2.setColor(Color(255,255,255,255));
+            pass_body.setColor(Color(255,255,255,255));
+            pass_matha.setColor(Color(255,255,255,255));
+        }
+    }
+    void thik_hoye_ja()
+    {
+        gari.setColor(Color(255,255,255,255));
+        chaka1.setColor(Color(255,255,255,255));
+        chaka2.setColor(Color(255,255,255,255));
+        pass_body.setColor(Color(255,255,255,255));
+        pass_matha.setColor(Color(255,255,255,255));
     }
 
     bool collusion(Sprite a)
@@ -374,7 +404,7 @@ int main() {
     new_gari.load_gari("file/Car.png");
     new_gari.load_passenger_body("file/driver-body.png");
     new_gari.load_passenger_matha("file/passanger2-head.png");
-
+    int fattor_blink_flag=0;
     while(window1.isOpen()) {
         Event event;
         while(window1.pollEvent(event)) {
@@ -450,15 +480,25 @@ int main() {
         }
 
         // health reduce
+        
         for(int i=0;i<pat.size();i++)
         {
             if(new_gari.collusion(pat[i].pa))
             {
                 health-=20;
                 pat.erase(pat.begin()+i);
+                fattor_blink_flag=40;
             }
         }
-
+        if(fattor_blink_flag>0)
+        {
+            new_gari.blink();
+            fattor_blink_flag--;
+        }
+        else
+        {
+            new_gari.thik_hoye_ja();
+        }
 
         // stone move + erase 
         for(int i=0;i<stone_coin.size();i++){
