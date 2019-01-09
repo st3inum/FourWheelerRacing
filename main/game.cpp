@@ -161,6 +161,10 @@ class pathor
     int badha=500,flag=1;
     public:
     bool f=0;
+    void scale()
+    {
+        pa.scale(0.09,0.09);
+    }
     void load_pathor(string txt,int ori)
     {
         // pat.setSmooth(true);
@@ -169,7 +173,7 @@ class pathor
         pa.setTexture(pat);
         pa.setOrigin(pa.getLocalBounds().width/2, pa.getLocalBounds().height/2);
         pa.setPosition(ori,10);
-        pa.scale(0.09,0.09);
+        cout<<"# "<<txt<<endl;
     }
     void move()
     {
@@ -241,18 +245,24 @@ int main() {
 
 
     srand(time(NULL));
+    
+    int n=1;
+    std::vector<pathor> pat;
     pathor tmp;
-    int n=6;
-    std::vector<pathor> pat(n);
+    tmp.scale();
+
     for(int i=0;i<n;i++)
     {
         int x=rand()%win_W;
-        pat[i].load_pathor("file/stone.png",x);
+        tmp.load_pathor("file/stone.png",x);
+        pat.push_back(tmp);
+
     }
+    
 
 
 
-
+    int timer=0;
 
     gari new_gari;
     new_gari.load_bg("file/bg_3.jpg");
@@ -265,6 +275,16 @@ int main() {
         while(window1.pollEvent(event)) {
             if(event.type == event.Closed) window1.close();
         }
+
+        if(timer>80){
+            int x=rand()%win_W;
+            tmp.load_pathor("file/stone.png",x);
+            pat.push_back(tmp);
+            timer=0;
+        }else{
+            timer++;
+        }
+
         window1.clear(Color::White);
         new_gari.move();
         new_gari.print();
