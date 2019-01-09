@@ -4,11 +4,180 @@ using namespace sf;
 using namespace std;
 #define win_W 1280
 RenderWindow window1(VideoMode(win_W, 620), "Four Wheeler Racing");
+
+class points
+{
+
+    Texture pat;
+    int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
+    double curr_v=10,uthbe=500.0/2;
+    int badha=500,flag=1;
+    int opacity=255;
+    public:
+    Sprite pa;
+    bool f=0;
+    int op_cnt=0;
+    void scale()
+    {
+        pa.scale(0.06,0.06);
+    }
+    void load_points(string txt,int ori)
+    {
+        // pat.setSmooth(true);
+        pat.loadFromFile(txt);
+        pa.setColor(Color(255,255,255,255));
+        pa.setTexture(pat);
+        pa.setOrigin(pa.getLocalBounds().width/2, pa.getLocalBounds().height/2);
+        pa.setPosition(ori,10);
+        cout<<"# "<<txt<<endl;
+    }
+    void move()
+    {
+        if(Keyboard::isKeyPressed(Keyboard::Right))
+        {
+           pa.move(-10,0);
+        }
+        if(Keyboard::isKeyPressed(Keyboard::Left))
+        {
+            pa.move(10,0);
+        }
+        if(uthbe>10)
+        {
+            if(flag==1)
+            {
+                if(pa.getPosition().y<badha)
+                {
+                    pa.move(0.0,curr_v);
+                    curr_v+=(flag*9.8/30.0);
+                }
+                else 
+                {
+                    flag*=-1;
+                    curr_v/=2;
+                    pa.move(0.0,-curr_v);
+                    curr_v+=(flag*9.8/30.0);
+                }
+            }
+            else
+            {
+                if(pa.getPosition().y>badha-uthbe && curr_v>0)
+                {
+                    pa.move(0.0,-curr_v);
+                    curr_v+=(flag*9.8/30.0);
+                }
+                else 
+                {
+                    uthbe/=3;
+                    flag*=-1;
+                    // curr_v=0;
+                    pa.move(0.0,curr_v);
+                    curr_v+=(flag*9.8/30.0);
+                }
+            }
+        }
+        else
+        {
+            if(pa.getPosition().y<badha)
+            {
+                f=1;
+                pa.move(0.0,curr_v);
+                curr_v+=(flag*9.8/30.0);
+            }
+        }
+        // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
+        
+    }
+    void blink()
+    {   
+        op_cnt++;
+        opacity+=8;
+        opacity%=255;
+        // if(opacity<=63)pa.setColor(Color(255,255,255,63));
+        if(opacity<=127)pa.setColor(Color(255,255,255,10));
+        // else if(opacity<=191)pa.setColor(Color(255,255,255,191));
+        else if(opacity<=255)pa.setColor(Color(255,255,255,255));
+    }
+    void print()
+    {
+        window1.draw(pa);
+    }
+};
+
+class pathor
+{
+
+    Texture pat;
+    int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
+    double curr_v=10,uthbe=500.0/2;
+    int badha=480;
+    int opacity=255,blink_time=0;
+    public:
+    Sprite pa;
+    bool f=0;
+    int op_cnt=0;
+    void scale()
+    {
+        pa.scale(0.2,0.2);
+    }
+    void load_points(string txt,int ori)
+    {
+        // pat.setSmooth(true);
+        pat.loadFromFile(txt);
+        pa.setColor(Color(255,255,255,255));
+        pa.setTexture(pat);
+        pa.setOrigin(pa.getLocalBounds().width/2, pa.getLocalBounds().height/2);
+        pa.setPosition(ori,10);
+        cout<<"# "<<txt<<endl;
+    }
+    void move()
+    {
+        if(Keyboard::isKeyPressed(Keyboard::Right))
+        {
+           pa.move(-10,0);
+        }
+        if(Keyboard::isKeyPressed(Keyboard::Left))
+        {
+            pa.move(10,0);
+        }
+
+        if(pa.getPosition().y<badha)
+        {
+            pa.move(0.0,curr_v);
+            curr_v+=(9.8/30.0);
+        }else
+        {
+            f=1;
+        }
+        // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
+        
+    }
+    void blink()
+    {   
+        blink_time++;
+        if(blink_time>40)
+        {
+            op_cnt++;
+            opacity+=8;
+            opacity%=255;
+            // if(opacity<=63)pa.setColor(Color(255,255,255,63));
+            if(opacity<=127)pa.setColor(Color(255,255,255,10));
+            // else if(opacity<=191)pa.setColor(Color(255,255,255,191));
+            else if(opacity<=255)pa.setColor(Color(255,255,255,255));
+        }
+    }
+    void print()
+    {
+        window1.draw(pa);
+    }
+};
+
+
+
 class gari
 {
     Texture text_C,text_G,passenger_body,passenger_matha,bg1,bg2,bg3,text_c;
-    Sprite chaka1,chaka2,gari,pass_body,pass_matha,bg_w_1,bg_w_2,bg_w_3;
     int pos_x=-10,pos_y=386,pos_w_x=-10,d=12800*2+15,wind_f=1280; // d for total distance you want to travel ;)
+    Sprite chaka1,chaka2,gari,pass_body,pass_matha,bg_w_1,bg_w_2,bg_w_3;
 public:
     void load_chaka(string txt)
     {
@@ -131,10 +300,24 @@ public:
                 }
             }
         }
+
         //cout<<pos_x<<' '<<pos_w_x<<' '<<d<<endl;
         //cout<<pos_w_x<<' '<<wind_f<<' '<<wind_n<<endl;
         //if(Keyboard::isKeyPressed(Keyboard::Up)) chaka1.move(0, -10),chaka2.move(0, -10),gari.move(0, -10),pass_body.move(0,-10),pass_matha.move(0,-10);
         //if(Keyboard::isKeyPressed(Keyboard::Down)) chaka1.move(0, 10),chaka2.move(0, 10),gari.move(0, 10),pass_body.move(0,10),pass_matha.move(0,10);
+    }
+
+    bool collusion(Sprite a)
+    {
+        return a.getGlobalBounds().intersects(chaka1.getGlobalBounds())||
+        a.getGlobalBounds().intersects(chaka2.getGlobalBounds())||
+        a.getGlobalBounds().intersects(pass_body.getGlobalBounds())||
+        a.getGlobalBounds().intersects(pass_matha.getGlobalBounds())||
+        a.getGlobalBounds().intersects(bg_w_1.getGlobalBounds())||
+        a.getGlobalBounds().intersects(bg_w_2.getGlobalBounds())||
+        a.getGlobalBounds().intersects(bg_w_3.getGlobalBounds())||
+        a.getGlobalBounds().intersects(gari.getGlobalBounds())
+        ;
     }
     void print()
     {
@@ -151,172 +334,12 @@ public:
     }
 };
 
-class points
-{
-
-    Texture pat;
-    int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
-    double curr_v=10,uthbe=500.0/2;
-    int badha=500,flag=1;
-    int opacity=255;
-    public:
-    Sprite pa;
-    bool f=0;
-    int op_cnt=0;
-    void scale()
-    {
-        pa.scale(0.06,0.06);
-    }
-    void load_points(string txt,int ori)
-    {
-        // pat.setSmooth(true);
-        pat.loadFromFile(txt);
-        pa.setColor(Color(255,255,255,255));
-        pa.setTexture(pat);
-        pa.setOrigin(pa.getLocalBounds().width/2, pa.getLocalBounds().height/2);
-        pa.setPosition(ori,10);
-        cout<<"# "<<txt<<endl;
-    }
-    void move()
-    {
-        if(Keyboard::isKeyPressed(Keyboard::Right))
-        {
-           pa.move(-10,0);
-        }
-        if(Keyboard::isKeyPressed(Keyboard::Left))
-        {
-            pa.move(10,0);
-        }
-        if(uthbe>10)
-        {
-            if(flag==1)
-            {
-                if(pa.getPosition().y<badha)
-                {
-                    pa.move(0.0,curr_v);
-                    curr_v+=(flag*9.8/30.0);
-                }
-                else 
-                {
-                    flag*=-1;
-                    curr_v/=2;
-                    pa.move(0.0,-curr_v);
-                    curr_v+=(flag*9.8/30.0);
-                }
-            }
-            else
-            {
-                if(pa.getPosition().y>badha-uthbe && curr_v>0)
-                {
-                    pa.move(0.0,-curr_v);
-                    curr_v+=(flag*9.8/30.0);
-                }
-                else 
-                {
-                    uthbe/=3;
-                    flag*=-1;
-                    // curr_v=0;
-                    pa.move(0.0,curr_v);
-                    curr_v+=(flag*9.8/30.0);
-                }
-            }
-        }
-        else
-        {
-            if(pa.getPosition().y<badha)
-            {
-                f=1;
-                pa.move(0.0,curr_v);
-                curr_v+=(flag*9.8/30.0);
-            }
-        }
-        // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
-        
-    }
-    void blink()
-    {   
-        op_cnt++;
-        opacity+=8;
-        opacity%=255;
-        // if(opacity<=63)pa.setColor(Color(255,255,255,63));
-        if(opacity<=127)pa.setColor(Color(255,255,255,10));
-        // else if(opacity<=191)pa.setColor(Color(255,255,255,191));
-        else if(opacity<=255)pa.setColor(Color(255,255,255,255));
-    }
-    void print()
-    {
-        window1.draw(pa);
-    }
-};
-
-class pathor
-{
-
-    Texture pat;
-    int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
-    double curr_v=10,uthbe=500.0/2;
-    int badha=500;
-    int opacity=255;
-    public:
-    Sprite pa;
-    bool f=0;
-    int op_cnt=0;
-    void scale()
-    {
-        pa.scale(0.2,0.2);
-    }
-    void load_points(string txt,int ori)
-    {
-        // pat.setSmooth(true);
-        pat.loadFromFile(txt);
-        pa.setColor(Color(255,255,255,255));
-        pa.setTexture(pat);
-        pa.setOrigin(pa.getLocalBounds().width/2, pa.getLocalBounds().height/2);
-        pa.setPosition(ori,10);
-        cout<<"# "<<txt<<endl;
-    }
-    void move()
-    {
-        if(Keyboard::isKeyPressed(Keyboard::Right))
-        {
-           pa.move(-10,0);
-        }
-        if(Keyboard::isKeyPressed(Keyboard::Left))
-        {
-            pa.move(10,0);
-        }
-
-        if(pa.getPosition().y<badha)
-        {
-            pa.move(0.0,curr_v);
-            curr_v+=(9.8/30.0);
-        }else
-        {
-            f=1;
-        }
-        // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
-        
-    }
-    void blink()
-    {   
-        op_cnt++;
-        opacity+=8;
-        opacity%=255;
-        // if(opacity<=63)pa.setColor(Color(255,255,255,63));
-        if(opacity<=127)pa.setColor(Color(255,255,255,10));
-        // else if(opacity<=191)pa.setColor(Color(255,255,255,191));
-        else if(opacity<=255)pa.setColor(Color(255,255,255,255));
-    }
-    void print()
-    {
-        window1.draw(pa);
-    }
-};
-
 
 int main() {
     window1.setFramerateLimit(60);
 
+
+    int point=0,health=1000;
 
     srand(time(NULL));
     
@@ -361,7 +384,7 @@ int main() {
             if(event.type == event.Closed) window1.close();
         }
 
-        if(timer_stone>20){//coin er timer_stone
+        if(timer_stone>120){//coin er timer_stone
             int x=rand()%win_W;
             tmp.load_points("file/stone.png",x);
             stone_coin.push_back(tmp);
@@ -370,7 +393,7 @@ int main() {
             timer_stone++;
         }
 
-        if(timer_fattor>20){//fattor er timer_fattor
+        if(timer_fattor>200){//fattor er timer_fattor
             int x=rand()%win_W;
             tmp_pat.load_points("file/fattor1.png",x);
             pat.push_back(tmp_pat);
@@ -382,6 +405,8 @@ int main() {
         window1.clear(Color::White);
         new_gari.move();
         new_gari.print();
+
+        //stone - stone baad 
         for(int i=0;i<stone_coin.size();i++)
         {
             for(int j=0;j<stone_coin.size();j++){
@@ -392,6 +417,9 @@ int main() {
                 }
             }
         }
+
+
+        // fattor - fattor baad
         for(int i=0;i<pat.size();i++)
         {
             for(int j=0;j<pat.size();j++){
@@ -402,6 +430,8 @@ int main() {
                 }
             }
         }
+
+        // stone - fattor baad
         for(int i=0;i<stone_coin.size();i++)
         {
             for(int j=0;j<pat.size();j++){
@@ -410,6 +440,22 @@ int main() {
                 }
             }
         }
+
+
+        // point count
+        for(int i=0;i<stone_coin.size();i++)
+        {
+            if(new_gari.collusion(stone_coin[i].pa))point++;
+        }
+
+        // health reduce
+        for(int i=0;i<pat.size();i++)
+        {
+            if(new_gari.collusion(pat[i].pa))health-=20;
+        }
+
+
+        // stone move + erase 
         for(int i=0;i<stone_coin.size();i++){
             stone_coin[i].move();
             if(stone_coin[i].f){
@@ -417,10 +463,14 @@ int main() {
                 if(stone_coin[i].op_cnt>=80) stone_coin.erase(stone_coin.begin()+i);
             }
         }
+
+
         for(int i=0;i<stone_coin.size();i++){
             stone_coin[i].print();
         }
 
+
+        //fattor move + erase
         for(int i=0;i<pat.size();i++){
             pat[i].move();
             if(pat[i].f){
@@ -429,12 +479,14 @@ int main() {
                     pat.erase(pat.begin()+i);
             }
         }
+
+
         for(int i=0;i<pat.size();i++){
             pat[i].print();
         }
 
 
-
+        cout<< "# "<<health << ' '<<point<<endl;
         window1.display();
     }
     return 0;
