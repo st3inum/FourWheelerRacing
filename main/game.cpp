@@ -382,11 +382,17 @@ int main() {
     tmp.scale();
 
     // Healthbar
+    Texture healthBar;
+    Sprite HealthBar;
+    healthBar.loadFromFile("file/healthbar.png");
+    HealthBar.setTexture(healthBar);
     RectangleShape healthbar;
-    healthbar.setPosition(win_W-250,20);
+    healthbar.setPosition(win_W-289,35);
     healthbar.setFillColor(Color(Color::Red));
-    double health=200;
-    healthbar.setSize(Vector2f(health,40));
+    double health=275;
+    healthbar.setSize(Vector2f(health,50));
+    HealthBar.setPosition(win_W-300,-150);
+    HealthBar.scale(0.4,0.4);
 
 
     for(int i=0;i<n;i++)
@@ -549,8 +555,9 @@ int main() {
             pat[i].print();
         }
 
-        healthbar.setSize(Vector2f(health,30));
+        healthbar.setSize(Vector2f(health,50));
         window1.draw(healthbar);
+        window1.draw(HealthBar);
         cout<< "# "<<health << ' '<<point<<endl;
         window1.display();
     }
