@@ -346,6 +346,10 @@ public:
         a.getGlobalBounds().intersects(gari.getGlobalBounds())
         ;
     }
+    bool matha_collusion(Sprite a)
+    {
+        return a.getGlobalBounds().intersects(pass_matha.getGlobalBounds());
+    }
     void print()
     {
         // window1.clear(Color::White);
@@ -366,7 +370,7 @@ int main() {
     window1.setFramerateLimit(60);
 
 
-    int point=0,health=1000;
+    int point=0;
 
     srand(time(NULL));
     
@@ -376,6 +380,14 @@ int main() {
     points tmp;
     pathor tmp_pat;
     tmp.scale();
+
+    // Healthbar
+    RectangleShape healthbar;
+    healthbar.setPosition(win_W-250,20);
+    healthbar.setFillColor(Color(Color::Red));
+    double health=200;
+    healthbar.setSize(Vector2f(health,40));
+
 
     for(int i=0;i<n;i++)
     {
@@ -483,9 +495,15 @@ int main() {
         
         for(int i=0;i<pat.size();i++)
         {
-            if(new_gari.collusion(pat[i].pa))
+            if(new_gari.matha_collusion(pat[i].pa))
             {
-                health-=20;
+                health/=2;
+                pat.erase(pat.begin()+i);
+                fattor_blink_flag=40;
+            }
+            else if(new_gari.collusion(pat[i].pa))
+            {
+                health-=10;
                 pat.erase(pat.begin()+i);
                 fattor_blink_flag=40;
             }
@@ -531,7 +549,8 @@ int main() {
             pat[i].print();
         }
 
-
+        healthbar.setSize(Vector2f(health,30));
+        window1.draw(healthbar);
         cout<< "# "<<health << ' '<<point<<endl;
         window1.display();
     }
