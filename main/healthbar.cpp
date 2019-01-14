@@ -14,6 +14,8 @@ int main()
     RectangleShape heathbar;
     heathbar.setPosition(100,200);
     heathbar.setFillColor(Color(Color::Red));
+    heathbar.setOutlineThickness(-10.f);
+    heathbar.setOutlineColor(Color::Black);
     double heath=200;
     heathbar.setSize(Vector2f(heath,30));
     while(window1.isOpen()) {

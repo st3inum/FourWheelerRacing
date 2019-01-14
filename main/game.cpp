@@ -105,7 +105,6 @@ class points
 
 class pathor
 {
-
     Texture pat;
     int pos_x=-1,pos_y=386,pos_w_x=-10,d=1280*2+15,wind_f=1280; // d for total distance you want to travel ;)
     double curr_v=10,uthbe=500.0/2;
@@ -367,6 +366,47 @@ public:
 
 
 int main() {
+    //coin show point
+    int coin_image_number=0,framerate=2;
+    Texture coin_point;
+    Sprite coin[10];
+    coin_point.loadFromFile("file/coin.png");
+    coin_point.setSmooth(true);
+    for(int i=0;i<10;i++)
+    {
+        coin[i].setPosition(50,40);
+        coin[i].setTexture(coin_point);
+        coin[i].setTextureRect(IntRect(85*i-1,252,85.00,80));
+        coin[i].scale(0.5,0.5);
+    }
+    coin[0].setOrigin(41.3-85*0,290.00-252);
+    coin[1].setOrigin(127.3-85*1,290.00-252);
+    coin[2].setOrigin(207.3-85*2,290.00-252);
+    coin[3].setOrigin(299.3-85*3,290.00-252);
+    coin[4].setOrigin(388.3-85*4,290.00-252);
+    coin[5].setOrigin(472.3-85*5,290.00-252);
+    coin[6].setOrigin(544.3-85*6,290.00-252);
+    coin[7].setOrigin(630.3-85*7,290.00-252);
+    coin[8].setOrigin(718.3-85*8,290.00-252);
+    coin[9].setOrigin(803.3-85*9,290.00-252);
+
+
+
+
+
+    Font font;
+    font.loadFromFile("file/font.ttf");
+    Text text_points,text_health;
+    text_points.setFont(font);
+    text_points.setString("0");
+    text_points.setPosition(80,12);
+    text_points.setCharacterSize(45);
+    text_health.setFont(font);
+    text_health.setString("100 %");
+    text_health.setPosition(win_W-170,40);
+
+
+
     window1.setFramerateLimit(60);
 
 
@@ -391,9 +431,11 @@ int main() {
     healthbar.setFillColor(Color(Color::Red));
     double health=275;
     healthbar.setSize(Vector2f(health,50));
-    HealthBar.setPosition(win_W-300,-150);
+    healthbar.setOutlineThickness(-2.f);
+    healthbar.setOutlineColor(Color::Black);
+    HealthBar.setPosition(win_W-301.5,-83);
     HealthBar.scale(0.4,0.4);
-
+    // healthBar.setSmooth(true);
 
     for(int i=0;i<n;i++)
     {
@@ -494,6 +536,7 @@ int main() {
             {
                 point++;
                 stone_coin.erase(stone_coin.begin()+i);
+                text_points.setString(to_string(point));
             }
         }
 
@@ -506,12 +549,14 @@ int main() {
                 health/=2;
                 pat.erase(pat.begin()+i);
                 fattor_blink_flag=40;
+                text_health.setString(to_string((int)(health/2.75))+" %");
             }
             else if(new_gari.collusion(pat[i].pa))
             {
                 health-=10;
                 pat.erase(pat.begin()+i);
                 fattor_blink_flag=40;
+                text_health.setString(to_string((int)(health/2.75))+" %");
             }
         }
         if(fattor_blink_flag>0)
@@ -554,10 +599,17 @@ int main() {
         for(int i=0;i<pat.size();i++){
             pat[i].print();
         }
+        coin_image_number++;
+        coin_image_number%=10*framerate;
+        window1.draw(coin[coin_image_number/framerate]);
+
+
 
         healthbar.setSize(Vector2f(health,50));
         window1.draw(healthbar);
         window1.draw(HealthBar);
+        window1.draw(text_health);
+        window1.draw(text_points);
         cout<< "# "<<health << ' '<<point<<endl;
         window1.display();
     }
