@@ -3,8 +3,8 @@ using namespace sf;
 #include <bits/stdc++.h>
 using namespace std;
 #define win_W 1280
+// RenderWindow window1;
 RenderWindow window1(VideoMode(win_W, 620), "Four Wheeler Racing");
-
 class points
 {
 
@@ -365,7 +365,13 @@ public:
 };
 
 
+
 int main() {
+    // RenderWindow window1(VideoMode(win_W, 620), "Four Wheeler Racing");
+    // window1.setTitle("Four Wheeler Racing");
+    // window1.setSize(VideoMode(win_W, 620));
+
+    // (VideoMode(win_W, 620), "Four Wheeler Racing");
     //coin show point
     int coin_image_number=0,framerate=2;
     Texture coin_point;
@@ -610,7 +616,7 @@ int main() {
         window1.draw(HealthBar);
         window1.draw(text_health);
         window1.draw(text_points);
-        cout<< "# "<<health << ' '<<point<<endl;
+        // cout<< "# "<<health << ' '<<point<<endl;
         window1.display();
     }
     return 0;
