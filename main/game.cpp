@@ -5,6 +5,109 @@ using namespace std;
 #define win_W 1280
 // RenderWindow window1;
 RenderWindow window1(VideoMode(win_W, 620), "Four Wheeler Racing");
+class life
+{
+    Texture heart;
+    int curr=0,j=0,n=+5;
+    public:
+    Sprite hea[10];
+    int start_point;
+    bool f=0;
+    void init()
+    {
+        heart.loadFromFile("file/heart.png");
+        heart.setSmooth(true);
+        int i=0;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(0,0,252,217.5));
+        hea[0].setOrigin(127.5,108);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(276,0,492-276,217.5));
+        hea[1].setOrigin(396-276,108);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(516,0,694.5-516,217.5));
+        hea[2].setOrigin(628.5-516,108);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(696.5,0,836.5-696.5,217.5));
+        hea[3].setOrigin(790.5-696.5,108);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(862,0,938-862,217.5));
+        hea[4].setOrigin(902-862,108);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(82.5,217.5,168-82.5,239.5));
+        hea[5].setOrigin(124.5-82.5,101);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(192,217.5,334.4-192,239.5));
+        hea[6].setOrigin(238.5-192,101);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(333,217.5,516-333,239.5));
+        hea[7].setOrigin(396-333,101);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(516,217.5,763.5-516,239.5));
+        hea[8].setOrigin(630-516,101);
+        //hea[i].scale(0.2,0.2);
+        i++;
+        hea[i].setPosition(start_point,500);
+        hea[i].setTexture(heart);
+        hea[i].setTextureRect(IntRect(763.5,217.5,1014-763.5,239.5));
+        hea[9].setOrigin(897-763.5,101);
+        //hea[i].scale(0.2,0.2);
+    }
+    void scale()
+    {
+        for(int i=0;i<10;i++)
+        hea[i].scale(0.2,0.2);
+    }
+    void move()
+    {
+        j++;
+        if(j==n-1)curr++;
+        j%=n;
+        curr%=10;
+        if(Keyboard::isKeyPressed(Keyboard::Right))
+        {
+            for(int i=0;i<10;i++)hea[i].move(-10,0);
+        }
+        if(Keyboard::isKeyPressed(Keyboard::Left))
+        {
+            for(int i=0;i<10;i++)hea[i].move(10,0);
+        }
+        // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
+
+    }
+    void draw()
+    {
+        window1.draw(hea[curr]);
+    }
+};
+
+
+
 class points
 {
 
@@ -50,7 +153,7 @@ class points
                     pa.move(0.0,curr_v);
                     curr_v+=(flag*9.8/30.0);
                 }
-                else 
+                else
                 {
                     flag*=-1;
                     curr_v/=2;
@@ -65,7 +168,7 @@ class points
                     pa.move(0.0,-curr_v);
                     curr_v+=(flag*9.8/30.0);
                 }
-                else 
+                else
                 {
                     uthbe/=3;
                     flag*=-1;
@@ -85,10 +188,10 @@ class points
             }
         }
         // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
-        
+
     }
     void blink()
-    {   
+    {
         op_cnt++;
         opacity+=8;
         opacity%=255;
@@ -148,10 +251,10 @@ class pathor
             f=1;
         }
         // cout<<flag<<' '<<pa.getPosition().y<<' '<<curr_v<<endl;
-        
+
     }
     void blink()
-    {   
+    {
         blink_time++;
         if(blink_time>40)
         {
@@ -175,11 +278,12 @@ class pathor
 class gari
 {
     Texture text_C,text_G,passenger_body,passenger_matha,bg1,bg2,bg3,text_c;
-    int pos_x=-10,pos_y=386,pos_w_x=-10,d=12800*2+15,wind_f=1280; // d for total distance you want to travel ;)
+
     Sprite chaka1,chaka2,gari,pass_body,pass_matha,bg_w_1,bg_w_2,bg_w_3;
 
     int opacity=255;
 public:
+    int pos_x=-10,pos_y=386,pos_w_x=-10,d=1280000*2+15,wind_f=1280; // d for total distance you want to travel ;)
     void load_chaka(string txt)
     {
         text_C.loadFromFile(txt);
@@ -307,7 +411,7 @@ public:
         //if(Keyboard::isKeyPressed(Keyboard::Down)) chaka1.move(0, 10),chaka2.move(0, 10),gari.move(0, 10),pass_body.move(0,10),pass_matha.move(0,10);
     }
     void blink()
-    {   
+    {
         opacity+=20;
         opacity%=255;
         if(opacity<=127)
@@ -367,10 +471,18 @@ public:
 
 
 int main() {
-    // RenderWindow window1(VideoMode(win_W, 620), "Four Wheeler Racing");
-    // window1.setTitle("Four Wheeler Racing");
-    // window1.setSize(VideoMode(win_W, 620));
+     //RenderWindow window1(VideoMode(win_W, 620), "Four Wheeler Racing");
+     //window1.setTitle("Four Wheeler Racing");
+     //window1.setSize(VideoMode(win_W, 620));
 
+
+    // lifer kaj
+
+    life ha;
+    vector<life>ha_vec;
+    int ha_timer=80;
+    ha.init();
+    ha.scale();
     // (VideoMode(win_W, 620), "Four Wheeler Racing");
     //coin show point
     int coin_image_number=0,framerate=2;
@@ -419,7 +531,7 @@ int main() {
     int point=0;
 
     srand(time(NULL));
-    
+
     int n=1;
     std::vector<points> stone_coin;
     std::vector<pathor> pat;
@@ -450,7 +562,7 @@ int main() {
         stone_coin.push_back(tmp);
 
     }
-    
+
     tmp_pat.scale();
 
     for(int i=0;i<n;i++)
@@ -477,6 +589,15 @@ int main() {
             if(event.type == event.Closed) window1.close();
         }
 
+        if(ha_timer>=300){
+            ha_timer=0;
+            ha.start_point=rand()%win_W;
+            ha.init();
+            ha_vec.push_back(ha);
+        }else{
+            ha_timer++;
+        }
+
         if(timer_stone>120){//coin er timer_stone
             int x=rand()%win_W;
             tmp.load_points("file/stone.png",x);
@@ -499,7 +620,7 @@ int main() {
         new_gari.move();
         new_gari.print();
 
-        //stone - stone baad 
+        //stone - stone baad
         for(int i=0;i<stone_coin.size();i++)
         {
             for(int j=0;j<stone_coin.size();j++){
@@ -545,9 +666,22 @@ int main() {
                 text_points.setString(to_string(point));
             }
         }
+        // life increase count
+        for(int i=0;i<ha_vec.size();i++)
+        {
+            for(int j=0;j<10;j++)
+            if(new_gari.collusion(ha_vec[i].hea[j]))
+            {
+                health=min(health+10.0,275.0);
+                ha_vec.erase(ha_vec.begin()+i);
+
+                text_health.setString(to_string((int)(health/2.75))+" %");
+                break;
+            }
+        }
 
         // health reduce
-        
+
         for(int i=0;i<pat.size();i++)
         {
             if(new_gari.matha_collusion(pat[i].pa))
@@ -555,15 +689,19 @@ int main() {
                 health/=2;
                 pat.erase(pat.begin()+i);
                 fattor_blink_flag=40;
-                text_health.setString(to_string((int)(health/2.75))+" %");
+                //text_health.setString(to_string((int)(health/2.75))+" %");
             }
             else if(new_gari.collusion(pat[i].pa))
             {
                 health-=10;
                 pat.erase(pat.begin()+i);
                 fattor_blink_flag=40;
-                text_health.setString(to_string((int)(health/2.75))+" %");
             }
+            if(health<=0)
+            {
+                window1.close();
+            }
+            text_health.setString(to_string((int)(health/2.75))+" %");
         }
         if(fattor_blink_flag>0)
         {
@@ -575,12 +713,12 @@ int main() {
             new_gari.thik_hoye_ja();
         }
 
-        // stone move + erase 
+        // stone move + erase
         for(int i=0;i<stone_coin.size();i++){
             stone_coin[i].move();
             if(stone_coin[i].f){
                 stone_coin[i].blink();
-                if(stone_coin[i].op_cnt>=80) 
+                if(stone_coin[i].op_cnt>=80)
                     stone_coin.erase(stone_coin.begin()+i);
             }
         }
@@ -608,6 +746,11 @@ int main() {
         coin_image_number++;
         coin_image_number%=10*framerate;
         window1.draw(coin[coin_image_number/framerate]);
+
+        for(int i=0;i<ha_vec.size();i++){
+            ha_vec[i].move();
+            ha_vec[i].draw();
+        }
 
 
 
