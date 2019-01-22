@@ -494,7 +494,7 @@ int game();
 
 class menu
 {
-    bool is_high=0;
+    bool is_high=0,is_help=0;
     //game over
     Texture game_over_t;
     Sprite game_over_s;
@@ -510,7 +510,7 @@ class menu
     Text new_game_t,help_t,high_score_t,exit_t;
     Font font;
 
-    Text highscore_t;
+    Text highscore_t,Help_t;
 
     public:
     Music menu_m;
@@ -579,6 +579,11 @@ class menu
         highscore_t.setFont(font);
         highscore_t.setPosition(540,250);
         highscore_t.setFillColor(Color::Blue);
+        Help_t.setCharacterSize(20);
+        Help_t.setString("You have to avoid the \nstone and collect gems.\nHeart will increase your \nlife and stone will \ndecrease your life.\n\nDeveloped by:\nTahseen Rasheed\n\t\t2017831019\nFahim Tajwar\n\t2017831020");
+        Help_t.setFont(font);
+        Help_t.setPosition(500,200);
+        Help_t.setFillColor(Color::Blue);
 
 
         //game over
@@ -596,7 +601,7 @@ class menu
     }
     void draw()
     {
-        if(!is_high)
+        if(!is_high && !is_help)
         {
             if(counter<=0)
             {
@@ -632,12 +637,19 @@ class menu
             window1.draw(m_s);
             window1.draw(c_s_b);
             highscore_t.setString(ss);
-            window1.draw(highscore_t);
+            if(is_high)
+            {
+                window1.draw(highscore_t);
+            }
+            else if(is_help)
+            {
+                window1.draw(Help_t);
+            }
         }
     }
     void move()
     {
-        if(!is_high)
+        if(!is_high && !is_help)
         {
             counter--;
             if(counter<0)counter=0;
@@ -669,7 +681,7 @@ class menu
                     help.setTexture(menu_bar_b);
                     if(Mouse::isButtonPressed(Mouse::Left))
                     {
-                        menu_m.stop();
+                        is_help=1;
                     }
                 }
                 else
@@ -683,7 +695,7 @@ class menu
                     high_score.setTexture(menu_bar_b);
                     if(Mouse::isButtonPressed(Mouse::Left)){
                         
-                        cout<<highscore<<endl;
+                        // cout<<highscore<<endl;
                         is_high=1;
                     }
                 }
@@ -710,12 +722,21 @@ class menu
                 }
             }
         }
-        else
+        else if(is_high)
         {
             if(c_s_b.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
             {
                 c_s_b.setTexture(close_w);
                 if(Mouse::isButtonPressed(Mouse::Left))is_high=0;
+            }
+            else c_s_b.setTexture(close_b);
+        }
+        else if(is_help)
+        {
+            if(c_s_b.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
+            {
+                c_s_b.setTexture(close_w);
+                if(Mouse::isButtonPressed(Mouse::Left))is_help=0;
             }
             else c_s_b.setTexture(close_b);
         }
