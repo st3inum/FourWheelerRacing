@@ -953,7 +953,7 @@ int game()
         }
 
         if(!new_resume.f)
-        if(timer_fattor>200){//fattor er timer_fattor
+        if(timer_fattor>100){//fattor er timer_fattor
             int x=rand()%win_W;
             tmp_pat.load_points("file/fattor1.png",x);
             pat.push_back(tmp_pat);
