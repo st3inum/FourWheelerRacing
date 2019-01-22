@@ -1014,7 +1014,7 @@ int game()
         }else{
             timer_stone++;
         }
-        if(count_frame%1000==0)
+        if(count_frame%500==0)
         {
             timer_fattor-=2;
             timer_stone+=1;
@@ -1022,7 +1022,7 @@ int game()
             if(timer_fattor<=10)timer_fattor=10;
         }
         if(!new_resume.f)
-        if(timer_fattor>100){//fattor er timer_fattor
+        if(timer_fattor>200){//fattor er timer_fattor
             int x=rand()%win_W;
             tmp_pat.load_points("file/fattor1.png",x);
             pat.push_back(tmp_pat);
