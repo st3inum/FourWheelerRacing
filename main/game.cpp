@@ -494,7 +494,7 @@ int game();
 
 class menu
 {
-
+    bool is_high=0;
     //game over
     Texture game_over_t;
     Sprite game_over_s;
@@ -504,15 +504,30 @@ class menu
     
 
 
-    Texture menu_tex,menu_bar_w,menu_bar_b;
-    Sprite menu_sp,new_game,help,high_score,exit;
+    Texture menu_tex,menu_bar_w,menu_bar_b,men,close_b,close_w;
+    Sprite menu_sp,new_game,help,high_score,exit,m_s,c_s_b;
 
     Text new_game_t,help_t,high_score_t,exit_t;
     Font font;
+
+    Text highscore_t;
+
     public:
     Music menu_m;
     void init()
     {
+        men.loadFromFile("file/high.png");
+        m_s.setTexture(men);
+        m_s.scale(.7,.7);
+        m_s.setPosition(400,130);
+        men.setSmooth(true);
+        close_b.loadFromFile("file/close.png");
+        c_s_b.setTexture(close_b);
+        // c_s_b.scale(.7,.7);
+        c_s_b.setPosition(830,130);
+        close_w.loadFromFile("file/close_w.png");
+        close_w.setSmooth(true);
+
         menu_tex.loadFromFile("file/bg_3.jpg");
         menu_bar_b.loadFromFile("file/button_2.png");
         menu_bar_w.loadFromFile("file/button_1.png");
@@ -561,6 +576,9 @@ class menu
         high_score_t.setPosition(510,420-90);
         exit_t.setPosition(570,420-0);
 
+        highscore_t.setFont(font);
+        highscore_t.setPosition(540,250);
+        highscore_t.setFillColor(Color::Blue);
 
 
         //game over
@@ -578,108 +596,132 @@ class menu
     }
     void draw()
     {
-        if(counter<=0)
+        if(!is_high)
         {
-            if (finish_music.getStatus() == Music::Status::Playing) {
-               finish_music.stop();
+            if(counter<=0)
+            {
+                if (finish_music.getStatus() == Music::Status::Playing) {
+                   finish_music.stop();
+                }
+                if (menu_m.getStatus() == Music::Status::Stopped) {
+                   menu_m.play();
+                }
+                window1.draw(menu_sp);
+                window1.draw(new_game);
+                window1.draw(help);
+                window1.draw(high_score);
+                window1.draw(exit);
+                window1.draw(new_game_t);
+                window1.draw(help_t);
+                window1.draw(high_score_t);
+                window1.draw(exit_t);
             }
-            if (menu_m.getStatus() == Music::Status::Stopped) {
-               menu_m.play();
+            else
+            {
+                window1.draw(game_over_s);
+                if (finish_music.getStatus() == sf::Music::Status::Stopped) {
+                   finish_music.play();
+                }
             }
-            window1.draw(menu_sp);
-            window1.draw(new_game);
-            window1.draw(help);
-            window1.draw(high_score);
-            window1.draw(exit);
-            window1.draw(new_game_t);
-            window1.draw(help_t);
-            window1.draw(high_score_t);
-            window1.draw(exit_t);
         }
         else
         {
-            window1.draw(game_over_s);
-            if (finish_music.getStatus() == sf::Music::Status::Stopped) {
-               finish_music.play();
-            }
-
+            string ss="High Score:\n\n        ";
+            ss+=to_string(highscore);
+            window1.draw(menu_sp);
+            window1.draw(m_s);
+            window1.draw(c_s_b);
+            highscore_t.setString(ss);
+            window1.draw(highscore_t);
         }
     }
     void move()
     {
-        counter--;
-        if(counter<0)counter=0;
-        if(counter<=0)
+        if(!is_high)
         {
-            if(new_game.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
+            counter--;
+            if(counter<0)counter=0;
+            if(counter<=0)
             {
-                new_game_t.setFillColor(Color::Red);
-                new_game.setTexture(menu_bar_b);
-                if(Mouse::isButtonPressed(Mouse::Left))
+                if(new_game.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
+                {
+                    new_game_t.setFillColor(Color::Red);
+                    new_game.setTexture(menu_bar_b);
+                    if(Mouse::isButtonPressed(Mouse::Left))
+                        {
+                            if(menu_m.getStatus()==Music::Status::Playing)
+                            {
+                                menu_m.stop();
+                            }
+                            if(game())counter=200;
+                            
+                        }
+                }
+                else
+                {
+                    new_game.setTexture(menu_bar_w);
+                    new_game_t.setFillColor(Color::White);
+                }
+                if(help.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
+                {
+                    //cout<<"help\n";
+                    help_t.setFillColor(Color::Red);
+                    help.setTexture(menu_bar_b);
+                    if(Mouse::isButtonPressed(Mouse::Left))
                     {
-                        if(menu_m.getStatus()==Music::Status::Playing)
+                        menu_m.stop();
+                    }
+                }
+                else
+                {
+                    help.setTexture(menu_bar_w);
+                    help_t.setFillColor(Color::White);
+                }
+                if(high_score.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
+                {
+                    high_score_t.setFillColor(Color::Red);
+                    high_score.setTexture(menu_bar_b);
+                    if(Mouse::isButtonPressed(Mouse::Left)){
+                        
+                        cout<<highscore<<endl;
+                        is_high=1;
+                    }
+                }
+                else
+                {
+                    high_score.setTexture(menu_bar_w);
+                    high_score_t.setFillColor(Color::White);
+                }
+                if(exit.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
+                {
+                    // cout<<"click\n";
+                    exit_t.setFillColor(Color::Red);
+                    exit.setTexture(menu_bar_b);
+                    if(Mouse::isButtonPressed(Mouse::Left))
                         {
                             menu_m.stop();
+                            window1.close();
                         }
-                        if(game())counter=200;
-                        
-                    }
-            }
-            else
-            {
-                new_game.setTexture(menu_bar_w);
-                new_game_t.setFillColor(Color::White);
-            }
-            if(help.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
-            {
-                //cout<<"help\n";
-                help_t.setFillColor(Color::Red);
-                help.setTexture(menu_bar_b);
-                if(Mouse::isButtonPressed(Mouse::Left))
+                }
+                else
                 {
-                    // menu_m.stop();
+                    exit.setTexture(menu_bar_w);
+                    exit_t.setFillColor(Color::White);
                 }
             }
-            else
+        }
+        else
+        {
+            if(c_s_b.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
             {
-                help.setTexture(menu_bar_w);
-                help_t.setFillColor(Color::White);
+                c_s_b.setTexture(close_w);
+                if(Mouse::isButtonPressed(Mouse::Left))is_high=0;
             }
-            if(high_score.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
-            {
-                high_score_t.setFillColor(Color::Red);
-                high_score.setTexture(menu_bar_b);
-                if(Mouse::isButtonPressed(Mouse::Left)){
-                    
-                    // menu_m.stop();
-                    cout<<highscore<<endl;
-                    // cout<<"high\n";
-                }
-            }
-            else
-            {
-                high_score.setTexture(menu_bar_w);
-                high_score_t.setFillColor(Color::White);
-            }
-            if(exit.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
-            {
-                // cout<<"click\n";
-                exit_t.setFillColor(Color::Red);
-                exit.setTexture(menu_bar_b);
-                if(Mouse::isButtonPressed(Mouse::Left))
-                    {
-                        // menu_m.stop();
-                        window1.close();
-                    }
-            }
-            else
-            {
-                exit.setTexture(menu_bar_w);
-                exit_t.setFillColor(Color::White);
-            }
+            else c_s_b.setTexture(close_b);
         }
     }
 };
+
 
 
 class resume
