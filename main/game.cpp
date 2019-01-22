@@ -960,12 +960,12 @@ int game()
     resume new_resume;
     new_resume.f=0;
     new_resume.init();
-
+    int count_frame=0;
 
 
     while(window1.isOpen()) {
         bg_music.setLoop(true);
-
+        count_frame++;
 
         Event event;
         while(window1.pollEvent(event)) {
@@ -993,7 +993,13 @@ int game()
         }else{
             timer_stone++;
         }
-
+        if(count_frame%1000==0)
+        {
+            timer_fattor-=2;
+            timer_stone+=1;
+            ha_timer+=1;
+            if(timer_fattor<=10)timer_fattor=10;
+        }
         if(!new_resume.f)
         if(timer_fattor>100){//fattor er timer_fattor
             int x=rand()%win_W;
