@@ -1,10 +1,14 @@
 #include<SFML/Graphics.hpp>
+#include<SFML/Audio.hpp>
 using namespace sf;
 #include <bits/stdc++.h>
 using namespace std;
 #define win_W 1280
 // RenderWindow window1;
 RenderWindow window1(VideoMode(win_W, 620), "Four Wheeler Racing");
+
+int highscore;
+
 class life
 {
     Texture heart;
@@ -132,7 +136,6 @@ class points
         pa.setTexture(pat);
         pa.setOrigin(pa.getLocalBounds().width/2, pa.getLocalBounds().height/2);
         pa.setPosition(ori,10);
-        cout<<"# "<<txt<<endl;
     }
     void move()
     {
@@ -229,7 +232,6 @@ class pathor
         pa.setTexture(pat);
         pa.setOrigin(pa.getLocalBounds().width/2, pa.getLocalBounds().height/2);
         pa.setPosition(ori,10);
-        cout<<"# "<<txt<<endl;
     }
     void move()
     {
@@ -277,6 +279,9 @@ class pathor
 
 class gari
 {
+
+    SoundBuffer right_move,left_move;
+    Sound r_m,l_m;
     Texture text_C,text_G,passenger_body,passenger_matha,bg1,bg2,bg3,text_c;
 
     Sprite chaka1,chaka2,gari,pass_body,pass_matha,bg_w_1,bg_w_2,bg_w_3;
@@ -326,6 +331,13 @@ class gari
         text_G.loadFromFile(txt);
         gari.setTexture(text_G);
         gari.setPosition(-10,386);
+        right_move.loadFromFile("file/sfx_jeep-higher-rpm.ogg");
+        r_m.setBuffer(right_move);
+        r_m.setVolume(23);
+
+        left_move.loadFromFile("file/sfx_jeep-low-rpm.ogg");
+        l_m.setBuffer(left_move);
+        l_m.setVolume(23);
     }
     void load_passenger_body(string txt)
     {
@@ -345,6 +357,7 @@ class gari
     {
         if(Keyboard::isKeyPressed(Keyboard::Right))
         {
+            r_m.play();
             if(pos_w_x-163/2<d)
             {
                 pos_w_x+=10;
@@ -374,8 +387,13 @@ class gari
                 }
             }
         }
+        else
+        {
+            r_m.stop();
+        }
         if(Keyboard::isKeyPressed(Keyboard::Left))
         {
+            l_m.play();
             if(pos_w_x>-10)
             {
                 pos_w_x-=10;
@@ -404,6 +422,10 @@ class gari
                     pass_matha.move(-10,0);
                 }
             }
+        }
+        else
+        {
+            l_m.stop();
         }
         //cout<<pos_x<<' '<<pos_w_x<<' '<<d<<endl;
         //cout<<pos_w_x<<' '<<wind_f<<' '<<wind_n<<endl;
@@ -472,10 +494,14 @@ int game();
 
 class menu
 {
+
     //game over
     Texture game_over_t;
     Sprite game_over_s;
     int counter=0;
+
+    Music finish_music;
+    
 
 
     Texture menu_tex,menu_bar_w,menu_bar_b;
@@ -484,6 +510,7 @@ class menu
     Text new_game_t,help_t,high_score_t,exit_t;
     Font font;
     public:
+    Music menu_m;
     void init()
     {
         menu_tex.loadFromFile("file/bg_3.jpg");
@@ -543,11 +570,22 @@ class menu
         game_over_s.setTexture(game_over_t);
         game_over_s.setPosition(400,300);
 
+        finish_music.openFromFile("file/bgm_finish.ogg");
+        finish_music.setVolume(20);
+        menu_m.openFromFile("file/OurMountain_v003.ogg");
+        menu_m.setVolume(500);
+
     }
     void draw()
     {
         if(counter<=0)
         {
+            if (finish_music.getStatus() == Music::Status::Playing) {
+               finish_music.stop();
+            }
+            if (menu_m.getStatus() == Music::Status::Stopped) {
+               menu_m.play();
+            }
             window1.draw(menu_sp);
             window1.draw(new_game);
             window1.draw(help);
@@ -561,11 +599,16 @@ class menu
         else
         {
             window1.draw(game_over_s);
+            if (finish_music.getStatus() == sf::Music::Status::Stopped) {
+               finish_music.play();
+            }
+
         }
     }
     void move()
     {
         counter--;
+        if(counter<0)counter=0;
         if(counter<=0)
         {
             if(new_game.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
@@ -574,6 +617,10 @@ class menu
                 new_game.setTexture(menu_bar_b);
                 if(Mouse::isButtonPressed(Mouse::Left))
                     {
+                        if(menu_m.getStatus()==Music::Status::Playing)
+                        {
+                            menu_m.stop();
+                        }
                         if(game())counter=200;
                         
                     }
@@ -585,10 +632,13 @@ class menu
             }
             if(help.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
             {
-                cout<<"help\n";
+                //cout<<"help\n";
                 help_t.setFillColor(Color::Red);
                 help.setTexture(menu_bar_b);
-                if(Mouse::isButtonPressed(Mouse::Left));
+                if(Mouse::isButtonPressed(Mouse::Left))
+                {
+                    // menu_m.stop();
+                }
             }
             else
             {
@@ -597,10 +647,14 @@ class menu
             }
             if(high_score.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
             {
-                cout<<"high_score\n";
                 high_score_t.setFillColor(Color::Red);
                 high_score.setTexture(menu_bar_b);
-                if(Mouse::isButtonPressed(Mouse::Left));
+                if(Mouse::isButtonPressed(Mouse::Left)){
+                    
+                    // menu_m.stop();
+                    cout<<highscore<<endl;
+                    // cout<<"high\n";
+                }
             }
             else
             {
@@ -613,7 +667,10 @@ class menu
                 exit_t.setFillColor(Color::Red);
                 exit.setTexture(menu_bar_b);
                 if(Mouse::isButtonPressed(Mouse::Left))
-                    window1.close();
+                    {
+                        // menu_m.stop();
+                        window1.close();
+                    }
             }
             else
             {
@@ -631,6 +688,10 @@ void main_menu();
 
 int main() {
     
+    
+    // freopen("file/highscore.txt","w",stdout);
+
+    // cout<<highscore;
     main_menu();
     return 0;
 }
@@ -639,9 +700,29 @@ int main() {
 
 int game()
 {
-    
+    Music bg_music;
+    bg_music.openFromFile("file/bg_music.ogg");
+    bg_music.setVolume(50);
+    bg_music.play();
+    SoundBuffer coin_m;
+    Sound c_m;
+    coin_m.loadFromFile("file/collect_coin.ogg");
+    c_m.setBuffer(coin_m);
+    c_m.setVolume(220);
 
 
+    SoundBuffer stone_m;
+    Sound s_m;
+    stone_m.loadFromFile("file/sfx_light-vehicle-big-impact-03.ogg");
+    s_m.setBuffer(stone_m);
+    s_m.setVolume(180);
+
+
+    SoundBuffer neck_m;
+    Sound n_m;
+    neck_m.loadFromFile("file/sfx_neck-crack-02.ogg");
+    n_m.setBuffer(neck_m);
+    n_m.setVolume(220);
 
     // lifer kaj
 
@@ -694,9 +775,8 @@ int game()
 
     window1.setFramerateLimit(60);
 
-
+    
     int point=0;
-
     srand(time(NULL));
 
     int n=1;
@@ -751,10 +831,16 @@ int game()
     new_gari.load_passenger_matha("file/passanger2-head.png");
     int fattor_blink_flag=0;
     while(window1.isOpen()) {
+        bg_music.setLoop(true);
+
+
         Event event;
         while(window1.pollEvent(event)) {
             if(event.type == event.Closed) window1.close();
         }
+
+
+
 
         if(ha_timer>=300){
             ha_timer=0;
@@ -828,6 +914,7 @@ int game()
         {
             if(new_gari.collusion(stone_coin[i].pa))
             {
+                c_m.play();
                 point++;
                 stone_coin.erase(stone_coin.begin()+i);
                 text_points.setString(to_string(point));
@@ -853,6 +940,7 @@ int game()
         {
             if(new_gari.matha_collusion(pat[i].pa))
             {
+                n_m.play();
                 health/=2;
                 pat.erase(pat.begin()+i);
                 fattor_blink_flag=40;
@@ -860,12 +948,22 @@ int game()
             }
             else if(new_gari.collusion(pat[i].pa))
             {
+                s_m.play();
                 health-=10;
                 pat.erase(pat.begin()+i);
                 fattor_blink_flag=40;
             }
             if(health<=0)
             {
+                highscore=max(highscore,point);
+
+                ofstream myfile;
+                myfile.open("file/highscore.txt");
+                myfile<<highscore<<endl;
+                myfile.close();
+
+
+                bg_music.stop();
                 return 1;
             }
             text_health.setString(to_string((int)(health/2.75))+" %");
@@ -934,11 +1032,16 @@ int game()
 
 void main_menu()
 {
-    // game();
-    
+    ifstream myfile;
+    myfile.open("file/highscore.txt");
+    myfile>>highscore;
+    myfile.close();
+
+
     menu new_menu;
     new_menu.init();
     while(window1.isOpen()) {
+        new_menu.menu_m.setLoop(true);
         Event event;
             while(window1.pollEvent(event)) {
                 if(event.type == event.Closed) window1.close();
@@ -947,18 +1050,10 @@ void main_menu()
         window1.clear();
         new_menu.move();
         new_menu.draw();
-
-
-       // cout<<Mouse::getPosition(window1).x<<' '<<Mouse::getPosition(window1).y<<endl;
-       // if(Mouse::isButtonPressed(Mouse::Left) && Mouse::getPosition().x>=988 && Mouse::getPosition().x<=1182 && Mouse::getPosition().y>=414 && Mouse::getPosition().y<=448){
-       //     cout<<"click\n";
-       // }
-
-
      window1.display();
-    // Mouse is inside the sprite.
 
 
 
  }
 }
+

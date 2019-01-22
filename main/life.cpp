@@ -109,29 +109,20 @@ class life
 
 int main() {
    window1.setFramerateLimit(60);
-   life ha;
-   vector<life>ha_vec;
+   life ha,pa;
    ha.init();
-   int ha_timer=80;
+   pa.init();
    while(window1.isOpen()) {
        Event event;
        while(window1.pollEvent(event)) {
            if(event.type == event.Closed) window1.close();
        }
 
-       if(ha_timer>=80){
-           ha_timer=0;
-           ha_vec.push_back(ha);
-       }else{
-           ha_timer++;
-       }
-
        window1.clear();
-       for(int i=0;i<ha_vec.size();i++){
-           ha_vec[i].move();
-           ha_vec[i].draw();
-       }
-
+       ha.move();
+       ha.draw();
+       pa.move();
+       pa.draw();
        window1.display();
 
    }
