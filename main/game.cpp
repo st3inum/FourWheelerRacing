@@ -682,6 +682,89 @@ class menu
 };
 
 
+class resume
+{
+    Texture menu_bar_w,menu_bar_b;
+    Sprite resume_sp,exit;
+
+    Text resume_sp_t,help_t,high_score_t,exit_t;
+    Font font;
+    Texture forg;
+    Sprite fg;
+    public:
+        bool f=0;
+    void init()
+    {
+        forg.loadFromFile("file/bg_4.jpg");
+        fg.setTexture(forg);
+        fg.setColor(Color(255,255,255,200));
+        menu_bar_b.loadFromFile("file/button_2.png");
+        menu_bar_w.loadFromFile("file/button_1.png");
+        menu_bar_w.setSmooth(true);
+        menu_bar_b.setSmooth(true);
+        resume_sp.setTexture(menu_bar_w);
+        exit.setTexture(menu_bar_w);
+        resume_sp.scale(0.5,0.5);
+        exit.scale(0.5,0.5);
+        resume_sp.setPosition(480,400-270);
+        exit.setPosition(480,400-0);
+        font.loadFromFile("file/font1.ttf");
+        resume_sp_t.setFont(font);
+        exit_t.setFont(font);
+        resume_sp_t.setString("Resume");
+        exit_t.setString("Exit");
+        resume_sp_t.setFillColor(Color::White);
+        exit_t.setFillColor(Color::White);
+        resume_sp_t.setPosition(530,420-270);
+        exit_t.setPosition(570,420-0);
+
+    }
+    void draw()
+    {
+        if(f)
+        {
+            window1.draw(fg);
+            window1.draw(resume_sp);
+            window1.draw(exit);
+            window1.draw(resume_sp_t);
+            window1.draw(exit_t);
+        }
+    }
+    void move()
+    {
+        if(resume_sp.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
+        {
+            resume_sp_t.setFillColor(Color::Red);
+            resume_sp.setTexture(menu_bar_b);
+            if(Mouse::isButtonPressed(Mouse::Left))
+            {
+                f=0;
+            }
+        }
+        else
+        {
+            resume_sp.setTexture(menu_bar_w);
+            resume_sp_t.setFillColor(Color::White);
+        }
+        if(exit.getGlobalBounds().contains(window1.mapPixelToCoords(Mouse::getPosition(window1))))
+        {
+            exit_t.setFillColor(Color::Red);
+            exit.setTexture(menu_bar_b);
+            if(Mouse::isButtonPressed(Mouse::Left))
+            {
+                window1.close();
+            }
+        }
+        else
+        {
+            exit.setTexture(menu_bar_w);
+            exit_t.setFillColor(Color::White);
+        }
+    }
+};
+
+
+
 void main_menu();
 
 
@@ -830,6 +913,14 @@ int game()
     new_gari.load_passenger_body("file/driver-body.png");
     new_gari.load_passenger_matha("file/passanger2-head.png");
     int fattor_blink_flag=0;
+
+
+    resume new_resume;
+    new_resume.f=0;
+    new_resume.init();
+
+
+
     while(window1.isOpen()) {
         bg_music.setLoop(true);
 
@@ -839,9 +930,9 @@ int game()
             if(event.type == event.Closed) window1.close();
         }
 
+        if (new_resume.f==0 && ((event.type == event.MouseButtonReleased && event.mouseButton.button== sf::Mouse::Right) || (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)) )new_resume.f=1;
 
-
-
+        if(!new_resume.f)
         if(ha_timer>=300){
             ha_timer=0;
             ha.start_point=rand()%win_W;
@@ -851,6 +942,7 @@ int game()
             ha_timer++;
         }
 
+        if(!new_resume.f)
         if(timer_stone>120){//coin er timer_stone
             int x=rand()%win_W;
             tmp.load_points("file/stone.png",x);
@@ -860,7 +952,8 @@ int game()
             timer_stone++;
         }
 
-        if(timer_fattor>20){//fattor er timer_fattor
+        if(!new_resume.f)
+        if(timer_fattor>200){//fattor er timer_fattor
             int x=rand()%win_W;
             tmp_pat.load_points("file/fattor1.png",x);
             pat.push_back(tmp_pat);
@@ -870,7 +963,7 @@ int game()
         }
 
         window1.clear(Color::White);
-        new_gari.move();
+        if(!new_resume.f)new_gari.move();
         new_gari.print();
 
         //stone - stone baad
@@ -980,7 +1073,7 @@ int game()
 
         // stone move + erase
         for(int i=0;i<stone_coin.size();i++){
-            stone_coin[i].move();
+            if(!new_resume.f)stone_coin[i].move();
             if(stone_coin[i].f){
                 stone_coin[i].blink();
                 if(stone_coin[i].op_cnt>=80)
@@ -996,7 +1089,7 @@ int game()
 
         //fattor move + erase
         for(int i=0;i<pat.size();i++){
-            pat[i].move();
+            if(!new_resume.f)pat[i].move();
             if(pat[i].f){
                 pat[i].blink();
                 if(pat[i].op_cnt>80)
@@ -1013,7 +1106,7 @@ int game()
         window1.draw(coin[coin_image_number/framerate]);
 
         for(int i=0;i<ha_vec.size();i++){
-            ha_vec[i].move();
+            if(!new_resume.f)ha_vec[i].move();
             ha_vec[i].draw();
         }
 
@@ -1024,6 +1117,12 @@ int game()
         window1.draw(HealthBar);
         window1.draw(text_health);
         window1.draw(text_points);
+
+        if(new_resume.f)
+        {
+            new_resume.move();
+            new_resume.draw();
+        }
         // cout<< "# "<<health << ' '<<point<<endl;
         window1.display();
     }
